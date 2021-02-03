@@ -1,47 +1,31 @@
 package com.example.demo.BACK;
 
 import com.example.demo.MODEL.Record1;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.beans.BeanProperty;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class JDBCClass {
-    public JDBCClass() {
-
-    }
+public class JDBCClass implements Strategy {
 
 
 
-
-
-    private final String DATABASE_URL = "jdbc:postgresql://10.10.10.142:5432/backtosch";
-
-
+    private String DATABASE_URL;
     static final String JDBC_DRIVER = "org.postgresql.Driver";
+    private String  USER;
+    private String PASSWORD;
 
-
-
-    static String  USER = "inozemcevns";
-
-
-    static String PASSWORD = "Tjed_913";
+    public JDBCClass(String DATABASE_URL, String USER, String PASSWORD) {
+        this.DATABASE_URL = DATABASE_URL;
+        this.USER = USER;
+        this.PASSWORD = PASSWORD;
+    }
 
     private Connection connection = null;
 
-
+    @Override
     public void createConnection() {
         Statement statement = null;
         try {
@@ -51,13 +35,12 @@ public class JDBCClass {
             System.out.println("Creating connection to database...");
             connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
+    @Override
     public ResponseEntity<List<Record1>> select() {
         Statement s = null;
         List<Record1> rd = new ArrayList<>();
@@ -77,10 +60,11 @@ public class JDBCClass {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
         return new ResponseEntity<List<Record1>>(rd, HttpStatus.OK);
     }
 
-
+    @Override
     public void insert(String name, String data) {
         Statement s = null;
         try {
@@ -96,11 +80,11 @@ public class JDBCClass {
 
 
     }
+    @Override
     public void deleteConnection() {
         if(connection != null) {
             try {
                 connection.close();
-                System.out.println("ok");
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
