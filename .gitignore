@@ -1,1 +1,2 @@
 /demo/src/main/resources/*
+/demo/target/classes/application.properties
