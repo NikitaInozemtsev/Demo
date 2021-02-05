@@ -40,57 +40,44 @@ public class JDBCClass implements Strategy {
         }
     }
 
-    public void deleteConnection() {
-        if(connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-    }
 
     @Override
     public ResponseEntity<List<Record1>> select() {
-        createConnection();
+
         Statement s = null;
         List<Record1> rd = new ArrayList<>();
         try {
+            createConnection();
             s = connection.createStatement();
             ResultSet res = s.executeQuery("SELECT * FROM public.bruh");
 
             while (res.next()) {
                 rd.add(new Record1(res.getInt(1), res.getString(2), res.getString(3)));
             }
-            if(s != null) {
-                s.close();
-            }
+            s.close();
+            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        deleteConnection();
         return new ResponseEntity<List<Record1>>(rd, HttpStatus.OK);
     }
 
     @Override
     public void insert(String name, String data) {
-        createConnection();
+
         Statement s = null;
         try {
+            createConnection();
             s = connection.createStatement();
             String sql = "INSERT INTO public.bruh (name, data) " + "VALUES('" + name + "', '" + data + "')";
             s.executeUpdate(sql);
-            if(s != null) {
-                s.close();
-            }
+            s.close();
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-        deleteConnection();
     }
-
-
 
 }

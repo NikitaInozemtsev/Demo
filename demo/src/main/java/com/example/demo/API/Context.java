@@ -27,6 +27,7 @@ public class Context {
     public ResponseEntity<List<Record1>> select() {
         return st.select();
     }
+
     public void insert(Record1 obj) {
         st.insert(obj.getName(), obj.getData());
     }
