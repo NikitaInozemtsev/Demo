@@ -25,7 +25,7 @@ public class JDBCClass implements Strategy {
 
     private Connection connection = null;
 
-    @Override
+
     public void createConnection() {
         Statement statement = null;
         try {
@@ -40,14 +40,23 @@ public class JDBCClass implements Strategy {
         }
     }
 
+    public void deleteConnection() {
+        if(connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public ResponseEntity<List<Record1>> select() {
+        createConnection();
         Statement s = null;
         List<Record1> rd = new ArrayList<>();
         try {
             s = connection.createStatement();
-            /*DatabaseMetaData md = connection.getMetaData();
-            String tableName = md.getTables(null, null, "%",null).getString(3);*/
             ResultSet res = s.executeQuery("SELECT * FROM public.bruh");
 
             while (res.next()) {
@@ -56,16 +65,17 @@ public class JDBCClass implements Strategy {
             if(s != null) {
                 s.close();
             }
-            return new ResponseEntity<List<Record1>>(rd, HttpStatus.OK);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
+        deleteConnection();
         return new ResponseEntity<List<Record1>>(rd, HttpStatus.OK);
     }
 
     @Override
     public void insert(String name, String data) {
+        createConnection();
         Statement s = null;
         try {
             s = connection.createStatement();
@@ -78,16 +88,9 @@ public class JDBCClass implements Strategy {
             throwables.printStackTrace();
         }
 
+        deleteConnection();
+    }
 
-    }
-    @Override
-    public void deleteConnection() {
-        if(connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-    }
+
+
 }

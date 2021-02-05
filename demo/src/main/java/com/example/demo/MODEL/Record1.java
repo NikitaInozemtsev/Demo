@@ -1,17 +1,26 @@
 package com.example.demo.MODEL;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
+import javax.persistence.*;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+@Table(name = "bruh")
 public class Record1 {
+    @Id @GeneratedValue(strategy=IDENTITY)
+    @Column(name = "id")
     @JsonProperty("id")
     int id;
+    @Column(name = "name")
     @JsonProperty("name")
     String name;
+    @Column(name = "data")
     @JsonProperty("data")
     String data;
+
+    public Record1() {}
 
     public Record1(int id, String name, String data) {
         this.id = id;
@@ -31,7 +40,6 @@ public class Record1 {
         this.data = data;
     }
 
-    public Record1(){}
     public int getId() {
         return id;
     }
