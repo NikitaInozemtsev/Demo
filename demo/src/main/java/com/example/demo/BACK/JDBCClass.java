@@ -55,6 +55,7 @@ public class JDBCClass implements Strategy {
                 rd.add(new Record1(res.getInt(1), res.getString(2), res.getString(3)));
             }
             s.close();
+            System.out.println("Close connection...");
             connection.close();
 
         } catch (SQLException throwables) {
